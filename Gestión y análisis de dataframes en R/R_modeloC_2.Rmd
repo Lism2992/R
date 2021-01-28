@@ -1,0 +1,277 @@
+---
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.5.2
+  kernelspec:
+    display_name: R
+    language: R
+    name: ir
+---
+
+<!-- #region nbgrader={"grade": false, "grade_id": "cell-bd0b11511d1e9d9c", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
+# Relación de ejercicios 2
+
+En estos ejercicios practicaremos la elaboración de funciones para reutilizar nuestro código, y el uso de las funciones de la familia *apply* (sapply, lapply, apply). 
+
+### Las funciones NUNCA deben hacer print() ni mostrar nada por pantalla, sino devolver el resultado del cálculo utilizando return.
+<!-- #endregion -->
+
+<!-- #region nbgrader={"grade": false, "grade_id": "cell-6931830012e6c23e", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
+**INSTRUCCIONES**: en cada trozo de código debes responder a la pregunta formulada, asegurándote de que el resultado queda guardado en la(s) variable(s) que por defecto vienen inicializadas a `NULL`. No se necesita usar variables intermedias, pero puedes hacerlo siempre que el resultado final del cálculo quede guardado exactamente en la variable que venía inicializada a NULL (debes reemplazar None por la secuencia de transformaciones necesarias, pero nunca cambiar el nombre de esa variable). **El código de tu solución puede ocupar tantas líneas como necesites, pero deben estar situadas entre la línea "NO MODIFICAR ESTA LÍNEA ..." y la línea "FIN SOLUCION". Ninguna de esas dos líneas debe ser modificada bajo ningún concepto.** En caso contrario tu solución no será puntuada.
+
+Después de cada ejercicio verás varias líneas de código ya hechas. Ejecútalas todas (no modifiques su código) y te dirán si tu solución es correcta o no. Si la solución es correcta, no se mostrará nada, pero si es incorrecta, verás un error indicando cuál es el test que tu solución no pasa. Además de esas pruebas, se realizarán algunas más (ocultas) a la hora de puntuar el ejercicio, pero si tu código pasa con éxito las líneas que ves, puedes estar bastante seguro de que tu solución es correcta. Asegúrate de que, al menos, todas las comprobaciones indican que tu solución es correcta antes de subir el ejercicio a la plataforma.
+
+Una vez finalizada la actividad, guarda tu fichero en RStudio, después ciérralo, vuélvelo a abrir y ejecútalo completo, y asegúrate de que no se lanza ningún error. De esta manera comprobarás que no has olvidado nada y que es posible ejecutarlo completo desde 0 y sin errores. **No se corregirá ningún fichero que tenga errores de sintaxis y no se pueda ejecutar completo**. No pasa nada si alguna de las comprobaciones lanza errores por ser incorrecta, pero el código de la solución de cada ejercicio no puede tener errores de sintaxis. Es lo mínimo que se debe exigir.
+
+**RECUERDA SUBIR CADA UNO DE LOS FICHEROS .R TAL CUAL (sueltos), SIN COMPRIMIR Y SIN CAMBIARLES EL NOMBRE. NO SUBAS NADA MÁS QUE LOS FICHEROS .R (no subas ningún PDF, ni ningún fichero ZIP ni similar)**. La plataforma ya los separa automáticamente en carpetas con vuestro nombre completo, por lo que no es necesario que se lo pongas al fichero.
+<!-- #endregion -->
+
+<!-- #region nbgrader={"grade": false, "grade_id": "cell-42564346aa5f4ad2", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
+**Ejercicio 1 (3 puntos).** Crear una función que devuelva TRUE si un número es divisor de alguno de los elementos de un vector de enteros. Deberá recibir como argumentos el vector y el número. El operador que calcula el resto de la división entera de dos números es `%%` y ya está vectorizado. Se harán **tres versiones** distintas de esta función: 
+
+- Resolver el ejercicio usando un bucle *while* dentro de la función. La función debe llamarse `div.vector.while` 
+- Resolver el ejercicio usando un bucle *for* dentro de la función. La función ahora se llamará `div.vector.for`
+- Resolver el ejercicio usando dentro de la función solamente operaciones aritméticas sencillas que ya están vectorizadas en R, sin utilizar ningún bucle. La función ahora se llamará `div.vector.op`
+
+Las tres funciones deben pasar todos los casos de prueba que ves a continuación.
+<!-- #endregion -->
+
+```{r nbgrader="{'grade': False, 'grade_id': 'ej1-respuesta', 'locked': False, 'schema_version': 3, 'solution': True, 'task': False}"}
+# NO MODIFICAR ESTA LINEA ej1-respuesta
+
+#######################################################
+
+div.vector.while <- function(v, numero){
+  iterac = 1
+  cuenta = 0
+  while (iterac <= (length(v))){
+    if (v[iterac]%%numero == 0){
+        cuenta = cuenta + 1
+      } else {
+        cuenta = cuenta
+      }
+    iterac = iterac + 1
+  }
+  return(cuenta)
+}
+
+#######################################################
+
+div.vector.for <- function(v, numero){
+  cuenta = 0
+    for (i in v){
+      if (i%%numero == 0){
+        cuenta = cuenta + 1
+      } else {
+        cuenta = cuenta
+      }
+    }
+  return(cuenta)
+}
+
+######################################################
+
+div.vector.op <- function(v, numero){
+    resto <- v%%numero
+    ceros <- resto[resto == 0]
+    return(length(ceros) > 0)
+}
+
+# FIN SOLUCION
+```
+
+```{r nbgrader="{'grade': True, 'grade_id': 'ej1-test', 'locked': True, 'points': 3, 'schema_version': 3, 'solution': False, 'task': False}"}
+stopifnot(div.vector.while(c(5,8,34), 6) == FALSE)
+stopifnot(div.vector.for(c(5,8,34),6) == FALSE)
+stopifnot(div.vector.op(c(5,8,34),6) == FALSE)
+stopifnot(div.vector.while(c(7,8,6), 4) == TRUE)
+stopifnot(div.vector.for(c(7,8,6),4) == TRUE)
+stopifnot(div.vector.op(c(7,8,6),4) == TRUE)
+stopifnot(div.vector.while(c(-5),6) == FALSE)
+stopifnot(div.vector.for(c(-5),6) == FALSE)
+stopifnot(div.vector.op(c(-5),6) == FALSE)
+stopifnot(div.vector.while(c(-5),-5) == TRUE)
+stopifnot(div.vector.for(c(-5),-5) == TRUE)
+stopifnot(div.vector.op(c(-5),-5) == TRUE)
+
+check.not.command = function(command, f){ stopifnot(!any(sapply(deparse(f), function(x) grepl(command, x)))) }
+
+check.not.command("%in%", div.vector.while)
+check.not.command("for", div.vector.while)
+
+check.not.command("while", div.vector.for)
+check.not.command("%in%", div.vector.for)
+
+check.not.command("for", div.vector.op)
+check.not.command("while", div.vector.op)                                                                
+```
+
+<!-- #region nbgrader={"grade": false, "grade_id": "cell-9fd328c340860990", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
+**Ejercicio 2 (2 puntos).** Crear una función `mult3` que, dado un número entero positivo, devuelva un vector con los números múltiplos de 3 que existen menores o iguales que **la mitad** de dicho número. Por ejemplo, para el número 17, `mult3(17)` debe devolver el vector (0, 3, 6) ya que 17/2 = 8.5 y por tanto, tenemos que buscar los múltiplos de 3 menores (en este caso) que 8.5. **No está permitido usar ningún tipo de bucle ni tampoco sapply/lapply**. Consulta la ayuda de R acerca de la función `seq`.
+
+- Invocar a esta función sobre el vector `c(17, 21, 23, 25)` sin usar un bucle sino sapply, y almacenar el resultado en la variable `mult3.lista`. ¿Qué tipo devuelve? ¿Por qué?
+
+- Incorporar a la función anterior un argumento adicional `n` que indique cuántos múltiplos queremos calcular como máximo. La nueva función debe llamarse `mult3.max` y devolverá los `n` primeros múltiplos de 3 que sean menores o iguales que el número, empezando por el 0. El argumento `n` **no debe tener ningún valor por defecto**, es decir, ha de ser obligatorio. Volver a invocarla usando `sapply` sobre el vector `c(17, 21, 23, 25)` con un máximo de `n = 3` múltiplos y almacenar el resultado en la variable `mult3.matriz`. Recuerda que los argumentos adicionales a la función que estás pasando a `sapply` debes dárselos, con nombre, a `sapply` a continuación de la función. ¿Qué tipo devuelve ahora? ¿Por qué es diferente al anterior?
+<!-- #endregion -->
+
+```{r nbgrader="{'grade': False, 'grade_id': 'ej2-respuesta', 'locked': False, 'schema_version': 3, 'solution': True, 'task': False}"}
+# NO MODIFICAR ESTA LINEA ej2-respuesta
+    
+
+mult3 <- function(numero){
+    vector <- seq(from = 0, to = numero%/%2, by = 3)
+    return(vector)
+}
+
+mult3.max <- function(numero, n){
+    vector <- seq(from = 0, to = numero%/%2, by = 3)
+    vector_recortado <- vector[1:n]
+    return(vector_recortado)
+}
+
+
+
+mult3.lista = sapply(c(17, 21, 23, 25), mult3)
+mult3.matriz = sapply(c(17, 21, 23, 25),n = 3, mult3.max )
+
+# FIN SOLUCION
+```
+
+```{r nbgrader="{'grade': True, 'grade_id': 'ej2-test', 'locked': True, 'points': 2, 'schema_version': 3, 'solution': False, 'task': False}"}
+stopifnot(is.list(mult3(24)) == FALSE)
+stopifnot(all(mult3(24) == c(0, 3, 6, 9, 12)))
+
+check.not.command = function(command, f){ stopifnot(!any(sapply(deparse(f), function(x) grepl(command, x)))) }
+check.not.command("for", mult3)  # no se pueden usar bucles en divisores ni en divisores.max
+check.not.command("while", mult3)
+check.not.command("for", mult3.max)
+check.not.command("while", mult3.max)
+                               
+stopifnot(is.list(mult3.lista)) # debe devolver una lista
+stopifnot(length(mult3.lista) == 4) # debe devolver una lista
+stopifnot(all(sapply(mult3.lista, length) == c(3, 4, 4, 5))) # longitudes correctas de cada vector devuelto por mult5
+stopifnot(all(mult3.max(24, 4) == c(0, 3, 6, 9)))
+stopifnot(nrow(mult3.matriz) == 3 & ncol(mult3.matriz) == 4)  # debe ser una matriz 3x20
+stopifnot(all(mult3.matriz[3,] == rep(6, 4)))
+```
+
+<!-- #region nbgrader={"grade": false, "grade_id": "cell-d36fe7d577ef57ff", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
+**Ejercicio 3 (2 puntos).** 
+
+* (a) **Sin utilizar bucles ni tampoco sapply/lapply**, crear una función `geometrica` que reciba un solo argumento, que será un vector, y calcule la **media geométrica** de los datos que hay en dicho vector, tal como indica la siguiente fórmula:
+
+  - Dado un vector n-dimensional $v = (v_1, ..., v_n)$, se define la media geométrica de los datos como 
+  
+  $$G = \sqrt[n]{v_1 v_2...v_n}$$
+  
+  Es decir, la raíz n-ésima del producto de los $n$ datos entre sí. Puedes calcular la raíz n-ésima de un número elevando dicho número a $1/n$ con el operador `**` (potencia). La función de R para multiplicar entre sí los elementos de un vector se denomina `prod`.
+* (b) Utilizando `apply`, invocar a la función `geometrica` sobre cada una de las filas de la matriz `m` definida a continuación, y almacenar el resultado en la variable `geometrica.filas`.
+<!-- #endregion -->
+
+```{r nbgrader="{'grade': False, 'grade_id': 'ej3-respuesta', 'locked': False, 'schema_version': 3, 'solution': True, 'task': False}"}
+# NO MODIFICAR ESTA LINEA ej3-respuesta
+geometrica <- function(v){
+    producto <- prod(v)
+    media_geom <- (producto ** (1/length(v)))
+    return(media_geom)
+}
+
+
+
+m = matrix(data = c(4, -1.2, 46, 78, -2.3, 8, -2.4, 92, 156, -4.6, 12, -3.6, 138, 234, -6.9), ncol = 5)
+m
+
+
+
+geometrica.filas = apply(m, MARGIN = 1, geometrica)
+# FIN SOLUCION
+```
+
+```{r nbgrader="{'grade': True, 'grade_id': 'ej3-test', 'locked': True, 'points': 2, 'schema_version': 3, 'solution': False, 'task': False}"}
+check.not.command = function(command, f){ stopifnot(!any(sapply(deparse(f), function(x) grepl(command, x)))) }
+check.not.command("for", geometrica) # no se puede usar for ni while en la función geometrica
+check.not.command("while", geometrica)
+check.not.command("apply", geometrica)
+
+stopifnot(round(geometrica(c(2, 3, 1, 1, 1)), 2) == 1.43)
+stopifnot(all(round(apply(m, MARGIN = 1, FUN = geometrica), 2) == c(13.66, 14.81, 17.01)))
+```
+
+<!-- #region nbgrader={"grade": false, "grade_id": "cell-be1bb1bb6a445cfc", "locked": true, "schema_version": 3, "solution": false, "task": false} -->
+**Ejercicio 4 (3 puntos).** Contestar a las siguentes cuestiones:
+
+- Crear una función `mayusculas` que reciba un vector `v` de cadenas de caracteres y un entero `n`, y devuelva otro vector de la misma longitud que `v` que sea una copia idéntica de `v` excepto en los `n` primeros elementos, los cuales deben haber sido pasados completamente a mayúsculas. Utilizar para ello la función `toupper(cad)` (consulta la ayuda de la función con `?toupper`). Aplicarla al vector `prueba` definido a continuación para comprobar su funcionamiento transformando los `n = 3` primeros elementos, y guardar el resultado en la variable `mayusculas.prueba`.
+  - Controlar el caso de que `n > length(v)` para que nunca se intenten pasar a mayúsculas más elementos de los que contiene el propio vector `v`. En dicho caso, simplemente se pasarán a mayúsculas todos los elementos de `v` aunque tenga menos de `n`.
+- Crear una función `mayusculas.niveles` que reciba un factor `f` y, utilizando la función `toupper`, renombre todos sus niveles para que se transformen en letras mayúsculas. La función debe devolver el factor con los niveles renombrados, **sin modificar los datos del factor** sino solamente los niveles (y esto automáticamente ya afectará a los datos). Aplicarla al factor `fac` creado a continuación y almacenar el resultado en la variable `fac.renom`.
+- Crear una función `mayusculas.columnas` que reciba un data.frame y renombre todas sus columnas, de manera que devuelva otro data.frame en el que todos los nombres de columnas estén ahora en mayúsculas. Utilizar una vez más la función `toupper` aplicada al vector de nombres de columnas, el cual debe ser extraído del dataframe con la función `colnames` de R. Almacenar el resultado devuelto en la variable `dat.renom`.
+<!-- #endregion -->
+
+```{r nbgrader="{'grade': False, 'grade_id': 'ej4-respuesta', 'locked': False, 'schema_version': 3, 'solution': True, 'task': False}"}
+# NO MODIFICAR ESTA LINEA ej4-respuesta
+
+##################################
+mayusculas <- function(v, n){
+  limite <- length(v)
+  if (n > limite){
+    n <- limite
+    mayus <- sapply(v[1:n], toupper)
+    return(as.vector(mayus))
+  } else if (n <= limite){
+    mayus <- sapply(v[1:n], toupper)
+    minus <- v[(n+1):limite]
+    return(as.vector(c(mayus, minus)))
+    
+  }
+}
+######################3
+mayusculas.niveles <- function(f){
+    nivel = 1
+    limite = length(levels(fac))
+    while (nivel <= limite){
+    levels(f)[nivel]<- toupper(levels(f)[nivel])
+    nivel = nivel +1
+    }
+    return(f)
+}
+
+###########################################
+
+mayusculas.columnas <- function(df){
+    nombres <- colnames(df)
+    nombres_may <- as.vector(sapply(nombres, toupper))
+    colnames(df) <- nombres_may
+    return(df)
+}
+
+
+######################################
+
+fac = factor(c("Alto","Bajo", "Mediano", "Bajo", "Alto", "Alto", "Mediano"))
+prueba = c("Esto", "es", "un", "vector", "de", "cadenas", "de", "caracteres")
+dat = data.frame(Nombre = c("Juan", "Antoine", "Guido"), Edad = c(18, 35, 38), 
+                 Nacionalidad = c("Esp", "Fra", "Ita"))
+
+
+fac.renom = mayusculas.niveles(fac)
+dat.renom = mayusculas.columnas(dat)
+mayusculas.prueba = mayusculas(prueba, n = 3)
+
+
+
+
+# FIN SOLUCION
+```
+
+```{r nbgrader="{'grade': True, 'grade_id': 'ej4-test', 'locked': True, 'points': 3, 'schema_version': 3, 'solution': False, 'task': False}"}
+stopifnot(length(mayusculas(prueba, 3)) == length(prueba))
+stopifnot(all(mayusculas(prueba, 3) == c('ESTO', 'ES', 'UN','vector','de','cadenas','de','caracteres')))
+renom = mayusculas.niveles(fac)
+df.renom = mayusculas.columnas(dat)
+stopifnot(all(renom == c("ALTO", "BAJO", "MEDIANO", "BAJO", "ALTO", "ALTO", "MEDIANO")))
+stopifnot(all(colnames(df.renom) == c("NOMBRE", "EDAD", "NACIONALIDAD")))
+stopifnot(nrow(df.renom) == 3 & ncol(df.renom) == 3)
+```
